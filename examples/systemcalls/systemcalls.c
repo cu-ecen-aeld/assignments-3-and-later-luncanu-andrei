@@ -66,7 +66,7 @@ bool do_exec(int count, ...)
     }
     else if (pid == 0) //child proc
     {
-        execv(command[0], comand);
+        execv(command[0], command);
         perror("execv");
         exit(EXIT_FAILURE);
     }
@@ -78,7 +78,7 @@ bool do_exec(int count, ...)
         va_end(args);
         return false;
     }
-
+}
 /*
  * TODO:
  *   Execute a system command by calling fork, execv(),
