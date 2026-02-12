@@ -1,4 +1,8 @@
 #include "systemcalls.h"
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
 /**
  * @param cmd the command to execute with system()
@@ -9,7 +13,14 @@
 */
 bool do_system(const char *cmd)
 {
-
+    int ret = system(cmd);
+    if (ret ==0)
+    {
+        return true;
+    }
+  
+  return false;
+}
 /*
  * TODO  add your code here
  *  Call the system() function with the command set in the cmd
@@ -45,9 +56,28 @@ bool do_exec(int count, ...)
         command[i] = va_arg(args, char *);
     }
     command[count] = NULL;
-    // this line is to avoid a compile warning before your implementation is complete
-    // and may be removed
-    command[count] = command[count];
+    
+    pid_t pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        va_end(args);
+        return false;
+    }
+    else if (pid == 0) //child proc
+    {
+        execv(command[0], comand);
+        perror("execv");
+        exit(EXIT_FAILURE);
+    }
+    //parent
+    int status;
+    if (waitpid(pid, &status, 0) == -1) 
+    {
+        perror("waitpid");
+        va_end(args);
+        return false;
+    }
 
 /*
  * TODO:
@@ -80,10 +110,34 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         command[i] = va_arg(args, char *);
     }
     command[count] = NULL;
-    // this line is to avoid a compile warning before your implementation is complete
-    // and may be removed
-    command[count] = command[count];
+    int fd = open(outputfile, O_WRONLY|O_CREAT|O_TRUNC, 0644);
+    if (fd < 0) {
+        perror("open");
+        va_end(args);
+        return false;
+    }
 
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
+        close(fd);
+        va_end(args);
+        return false;
+    } else if (pid == 0) {
+        if (dup2(fd, STDOUT_FILENO) < 0) {
+            perror("dup2");
+            exit(EXIT_FAILURE);
+        }
+        close(fd); 
+        
+        execv(command[0], command);
+        perror("execv");
+        exit(EXIT_FAILURE);
+    }
+
+    close(fd);
+    int status;
+    waitpid(pid, &status, 0);
 
 /*
  * TODO

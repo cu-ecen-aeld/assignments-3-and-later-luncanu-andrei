@@ -9,8 +9,6 @@ NUMFILES=10
 WRITESTR=AELD_IS_FUN
 WRITEDIR=/tmp/aeld-data
 username=$(cat conf/username.txt)
-make -C "$(dirname "$0")" clean
-make -C "$(dirname "$0")"
 
 if [ $# -lt 3 ]
 then
