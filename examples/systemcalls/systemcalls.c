@@ -28,9 +28,6 @@ bool do_system(const char *cmd)
  *   or false() if it returned a failure
 */
 
-    return true;
-}
-
 /**
 * @param count -The numbers of variables passed to the function. The variables are command to execute.
 *   followed by arguments to pass to the command
@@ -78,7 +75,6 @@ bool do_exec(int count, ...)
         va_end(args);
         return false;
     }
-}
 /*
  * TODO:
  *   Execute a system command by calling fork, execv(),
@@ -91,7 +87,7 @@ bool do_exec(int count, ...)
 
     va_end(args);
 
-    return true;
+    return WIFEXITED(status) && (WEXITSTATUS(status) == 0);
 }
 
 /**
@@ -149,5 +145,5 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 
     va_end(args);
 
-    return true;
+    return WIFEXITED(status) && (WEXITSTATUS(status) == 0);
 }
