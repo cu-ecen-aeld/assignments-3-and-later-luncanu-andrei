@@ -31,7 +31,7 @@ jobs:
   full-test:
     runs-on: self-hosted
     container:
-      image: cuaesd/aesd-autotest:24-assignment3
+      image: cuaesd/aesd-autotest:24-assignment5
       options: -v /etc/ssl/certs:/etc/ssl/certs:ro
 
     steps:
@@ -48,3 +48,4 @@ jobs:
 
       - name: Run full test
         run: ./full-test.sh
+>>>>>>> assignments-base/assignment5
